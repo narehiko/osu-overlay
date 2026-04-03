@@ -1,4 +1,4 @@
-# 🎮 osu! Stream Overlay
+# osu! Stream Overlay
 
 ![Next.js](https://img.shields.io/badge/Next.js-black?style=flat&logo=nextdotjs&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white)
