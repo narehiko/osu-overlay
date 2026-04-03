@@ -32,11 +32,15 @@ Running it locally guarantees zero latency for your OBS and keeps your API crede
 - An **osu! API v2 OAuth Client** (See Step 4 for the guide).
 
 ### 2. Clone the Repository
+```bash
 git clone [https://github.com/YOUR_USERNAME/osu-overlay-next.git](https://github.com/YOUR_USERNAME/osu-overlay-next.git)
 cd osu-overlay-next
+```
 
 ### 3. Install Dependencies
+```bash
 npm install
+```
 
 ### 4. Environment Variables & API Setup
 Create a new file named `.env.local` in the root directory. You need to provide your osu! API credentials to make the live rank tracker work.
@@ -51,15 +55,18 @@ Create a new file named `.env.local` in the root directory. You need to provide 
 5. You will now see your **Client ID** (a number) and **Client Secret** (a long string of characters).
 
 Copy those details and your exact osu! username into your `.env.local` file like this:
-
+```env
 OSU_CLIENT_ID=your_client_id_here
 OSU_CLIENT_SECRET=your_client_secret_here
 OSU_USERNAME=your_exact_osu_username
+```
 *Note: This .env.local file is automatically ignored by Git, ensuring your secret credentials will never be uploaded to the public repository.*
 
 ### 5. Setup Goal Configuration
 Rename the provided example config file to initialize your local storage:
+```bash
 cp goal_config.example.json goal_config.json
+```
 
 ## 💻 Usage
 ### Running the App Locally (Terminal/CMD)
@@ -67,14 +74,19 @@ Every time you want to stream, you need to start the local Next.js server.
 
 1. Open your terminal (Command Prompt, PowerShell, or VSCode Terminal).
 2. Navigate to the project directory where you cloned/extracted the files:
+   ```bash
    cd path/to/your/osu-overlay-next
    npm run dev
+   ```
+
 
    *Or for better performance, build it once and start in production mode:*
+   ```bash
    npm run build
    npm start
+   ```
 
-Important: Keep the terminal window open while you are streaming. If you close the terminal, the overlay will go offline.
+⚠️**IMPORTANT:** Keep the terminal window open while you are streaming. If you close the terminal, the overlay will go offline.
 
 ## OBS / TikTok LIVE Studio Setup
 1. Add a new Browser Source / Link Source.
@@ -96,5 +108,3 @@ To update your stream goals:
 
 ## 📄 License
 This project is open-source and available under the MIT License. Feel free to fork, modify, and improve!
-
-```
