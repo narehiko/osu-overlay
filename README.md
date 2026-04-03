@@ -85,8 +85,7 @@ Every time you want to stream, you need to start the local Next.js server.
    npm run build
    npm start
    ```
-
-⚠️**IMPORTANT:** Keep the terminal window open while you are streaming. If you close the terminal, the overlay will go offline.
+   ⚠️**IMPORTANT:** Keep the terminal window open while you are streaming. If you close the terminal, the overlay will go offline.
 
 ## OBS / TikTok LIVE Studio Setup
 1. Add a new Browser Source / Link Source.
