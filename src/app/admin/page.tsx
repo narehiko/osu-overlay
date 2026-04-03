@@ -7,7 +7,7 @@ export default function AdminPage() {
     const [msg, setMsg] = useState('');
     const [formData, setFormData] = useState({ start_rank: 0, live_target: 0, ultimate_goal: 0 });
 
-    const SECRET_PIN = "225";
+    const SECRET_PIN = "12345";
 
     useEffect(() => {
         if (isUnlocked) {
@@ -58,7 +58,7 @@ export default function AdminPage() {
                             value={pin}
                             onChange={(e) => setPin(e.target.value)}
                             className="p-3 bg-[#111] border border-gray-700 rounded text-cyan-400 text-center tracking-widest font-bold focus:outline-none focus:border-cyan-400"
-                            placeholder="***"
+                            placeholder="*****"
                             required
                         />
                         <button type="submit" className="p-3 bg-gradient-to-r from-pink-500 to-cyan-400 rounded font-bold hover:opacity-80 transition">
