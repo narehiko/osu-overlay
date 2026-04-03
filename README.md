@@ -33,8 +33,8 @@ Running it locally guarantees zero latency for your OBS and keeps your API crede
 
 ### 2. Clone the Repository
 ```bash
-git clone [https://github.com/YOUR_USERNAME/osu-overlay-next.git](https://github.com/YOUR_USERNAME/osu-overlay-next.git)
-cd osu-overlay-next
+git clone [https://github.com/YOUR_USERNAME/osu-overlay.git](https://github.com/YOUR_USERNAME/osu-overlay.git)
+cd osu-overlay
 ```
 
 ### 3. Install Dependencies
@@ -75,7 +75,7 @@ Every time you want to stream, you need to start the local Next.js server.
 1. Open your terminal (Command Prompt, PowerShell, or VSCode Terminal).
 2. Navigate to the project directory where you cloned/extracted the files:
    ```bash
-   cd path/to/your/osu-overlay-next
+   cd path/to/your/osu-overlay
    npm run dev
    ```
 
