@@ -4,13 +4,10 @@ import { useStreamCompanion } from '@/hooks/useStreamCompanion';
 export const NowPlaying = () => {
     const { data, status } = useStreamCompanion();
 // LOGIC 3 STATE
-  // 1. Disconnected: SC mati atau sedang proses koneksi
   const isDisconnected = status === 'disconnected' || status === 'connecting';
   
-  // 2. Idle: SC nyala, tapi osu! mati atau lagi nggak milih lagu (status "Null" atau kosong)
   const isIdle = status === 'connected' && (!data?.status || data.status === "Null" || data.status === "");
   
-  // 3. Active: SC nyala, osu! nyala, dan ada data lagu yang valid
   const isActive = status === 'connected' && !isIdle;
 
   return (

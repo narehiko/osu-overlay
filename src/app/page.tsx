@@ -1,6 +1,7 @@
 import { LiveRankCard } from '@/components/LiveRankCard';
 import { GoalTracker } from '@/components/GoalTracker';
 import { NowPlaying } from '@/components/NowPlaying';
+import { PpCounter } from '@/components/PpCounter';
 
 export default function Home() {
   return (
@@ -24,7 +25,10 @@ export default function Home() {
         {/* Widget 2: Goal Tracker */}
         <GoalTracker />
 
-        {/* Widget 3: Now Playing StreamCompanion */}
+        {/* Widget 3: Real-Time PP Counter */}
+        <PpCounter />
+
+        {/* Widget 4: Now Playing StreamCompanion */}
         <NowPlaying />
 
       </div>

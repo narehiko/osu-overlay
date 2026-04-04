@@ -13,6 +13,8 @@ export interface SCTokens {
     mStars?: string | number;
     status?: string;
     mods?: string;
+    livePp?: number;
+    mSimulatedPp?: number;
 }
 
 export interface GoalState {

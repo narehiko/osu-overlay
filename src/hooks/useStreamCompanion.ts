@@ -11,7 +11,7 @@ export const useStreamCompanion = () => {
         socket.onopen = () => {
             console.log("✅ Connected to StreamCompanion!");
             setStatus('connected');
-            socket.send(JSON.stringify(["titleRoman", "artistRoman", "diffName", "mStars", "status", "mods"]));
+            socket.send(JSON.stringify(["titleRoman", "artistRoman", "diffName", "mStars", "status", "mods", "livePp", "mSimulatedPp"]));
         };
 
         socket.onmessage = (event) => {
