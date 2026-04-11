@@ -73,12 +73,12 @@ cp goal_config.example.json goal_config.json
 ```
 
 ## 🔗 URL Routing (Modular Rendering)
-### To avoid manual cropping in OBS/TikTok Studio, use these specific URLs as Browser Sources:
-1. Rank & PP Stats: http://localhost:3000/index.html?overlay=rank
-2. Stream Goal: http://localhost:3000/index.html?overlay=goal
-3. Song Request Queue: http://localhost:3000/index.html?overlay=queue
-4. Now Playing Only: http://localhost:3000/index.html?overlay=nowplaying
-5. Full Preview: http://localhost:3000/
+### TikTok LIVE Studio requires a file extension in the URL for validation. Use these direct links:
+
+- **Rank & PP:** http://localhost:3000/rank.html
+- **Stream Goal:** http://localhost:3000/goal.html
+- **Song Request:** http://localhost:3000/queue.html
+- **Now Playing:** http://localhost:3000/nowplaying.html
 
 ## 💻 Usage
 ### Running the App Locally (Terminal/CMD)
