@@ -19,22 +19,31 @@ export default function AdminPage() {
 
     const SECRET_PIN = "12345";
     
-    const sendMockRequest = () => {
+    const sendMockRequest = async () => {
         if (!mockId) return;
 
-        const bc = new BroadcastChannel('song_queue_channel');
-
-        bc.postMessage({
+        const mockData = {
             id: mockId,
             requester: "tester_admin",
-            title: "Simulation Beatmap Title",
+            title: "Simulation Beatmap",
             artist: "Mock Artist",
-            diff: "Insane Difficulty"
-        });
+            diff: "Insane"
+        };
 
-        bc.close();
-        setMockId('');
-        console.log("✅ Mock request broadcasted!");
+        try {
+            const res = await fetch('/api/simulator', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(mockData)
+            });
+
+            if (res.ok) {
+                setMockId('');
+                console.log("✅ Mock request sent via Server!");
+            }
+        } catch (err) {
+            console.error("Gagal mengirim simulasi:", err);
+        }
     };
 
     useEffect(() => {

@@ -1,7 +1,19 @@
 import { NextRequest } from 'next/server';
-import { WebcastPushConnection } from 'tiktok-live-connector';
+import { TikTokLiveConnection } from 'tiktok-live-connector';
+import { EventEmitter } from 'events';
+
+interface TikTokChatEvent {
+    comment: string;
+    uniqueId: string;
+}
 
 export const dynamic = 'force-dynamic';
+
+const simulatorEmitter = new EventEmitter();
+
+export function sendSimulationToSSE(data: any) {
+    simulatorEmitter.emit('mock_request', data);
+}
 
 async function fetchBeatmapData(beatmapId: string) {
     try {
@@ -16,62 +28,52 @@ async function fetchBeatmapData(beatmapId: string) {
             })
         });
         const tokenData = await tokenRes.json();
-
         const mapRes = await fetch(`https://osu.ppy.sh/api/v2/beatmaps/${beatmapId}`, {
             headers: { Authorization: `Bearer ${tokenData.access_token}` }
         });
-
-        if (!mapRes.ok) return null;
-        return await mapRes.json();
+        return mapRes.ok ? await mapRes.json() : null;
     } catch (err) {
-        console.error("Gagal fetch osu! API:", err);
         return null;
     }
 }
 
 export async function GET(req: NextRequest) {
     const username = req.nextUrl.searchParams.get('username');
-
-    if (!username) {
-        return new Response('TikTok username required', { status: 400 });
-    }
+    if (!username) return new Response('Username TikTok diperlukan', { status: 400 });
 
     const stream = new ReadableStream({
         start(controller) {
-            const tiktokConnection = new WebcastPushConnection(username);
+            const tiktokConnection = new TikTokLiveConnection(username);
 
-            tiktokConnection.connect().then(state => {
-                console.info(`✅ Terhubung ke TikTok LIVE kamar: ${state.roomId}`);
-            }).catch(err => {
-                console.error('❌ Gagal connect ke TikTok:', err);
-                controller.error(err);
-            });
-
-            tiktokConnection.on('chat', async (data) => {
+            // Handler 1: Chat asli dari TikTok
+            (tiktokConnection as EventEmitter).on('chat', async (data: TikTokChatEvent) => {
                 const match = data.comment.match(/^!req\s+(\d+)/i);
-
                 if (match) {
                     const beatmapId = match[1];
-                    const requester = data.uniqueId;
-
                     const beatmapData = await fetchBeatmapData(beatmapId);
-
                     if (beatmapData) {
                         const payload = {
                             id: beatmapId,
-                            requester: requester,
+                            requester: data.uniqueId,
                             title: beatmapData.beatmapset.title,
                             artist: beatmapData.beatmapset.artist,
                             diff: beatmapData.version
                         };
-
                         controller.enqueue(`data: ${JSON.stringify(payload)}\n\n`);
                     }
                 }
             });
 
+            const onMockRequest = (data: any) => {
+                controller.enqueue(`data: ${JSON.stringify(data)}\n\n`);
+            };
+            simulatorEmitter.on('mock_request', onMockRequest);
+
+            tiktokConnection.connect().catch(err => console.error('TikTok Connect Error:', err));
+
             req.signal.addEventListener('abort', () => {
                 tiktokConnection.disconnect();
+                simulatorEmitter.off('mock_request', onMockRequest);
                 controller.close();
             });
         }
