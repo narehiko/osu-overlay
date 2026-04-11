@@ -46,6 +46,22 @@ export default function AdminPage() {
         }
     };
 
+    const sendQueueAction = async (actionType: 'NEXT_SONG' | 'CLEAR_QUEUE') => {
+        try {
+            const res = await fetch('/api/simulator', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: actionType })
+            });
+
+            if (res.ok) {
+                console.log(`✅ Action ${actionType} sent!`);
+            }
+        } catch (err) {
+            console.error("Failed to send action:", err);
+        }
+    };
+
     useEffect(() => {
         if (isUnlocked) {
             fetch('/api/goal')
@@ -166,6 +182,26 @@ export default function AdminPage() {
                                 >
                                     SEND MOCK REQUEST
                                 </button>
+
+                                <div className="pt-4 border-t border-gray-700">
+                                    <h3 className="text-gray-400 font-bold text-[10px] uppercase tracking-[1px] mb-2">
+                                        Queue Management
+                                    </h3>
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={() => sendQueueAction('NEXT_SONG')}
+                                            className="flex-1 p-2 bg-yellow-500 hover:bg-yellow-400 text-black font-black rounded transition text-[10px]"
+                                        >
+                                            ⏭️ NEXT SONG
+                                        </button>
+                                        <button
+                                            onClick={() => sendQueueAction('CLEAR_QUEUE')}
+                                            className="flex-1 p-2 bg-red-600 hover:bg-red-500 text-white font-black rounded transition text-[10px]"
+                                        >
+                                            🗑️ CLEAR ALL
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
 
                         <button type="submit" className="mt-2 p-3 bg-gradient-to-r from-pink-500 to-cyan-400 rounded font-bold hover:opacity-80 transition">

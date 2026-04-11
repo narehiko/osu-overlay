@@ -5,8 +5,8 @@ export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
         sendSimulationToSSE(body);
-        return NextResponse.json({ success: true, message: 'Simulation sent!' });
+        return NextResponse.json({ success: true, message: 'Payload sent to SSE!' });
     } catch (error) {
-        return NextResponse.json({ success: false, error: 'Failed to send simulation' }, { status: 500 });
+        return NextResponse.json({ success: false, error: 'Failed to send payload' }, { status: 500 });
     }
 }

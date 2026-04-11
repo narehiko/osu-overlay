@@ -44,12 +44,20 @@ export const useSongQueue = () => {
 
     useEffect(() => {
         if (!tiktokUsername) return;
-
         const eventSource = new EventSource(`/api/tiktok?username=${tiktokUsername}`);
 
         eventSource.onmessage = (event) => {
-            const newSong: QueuedSong = JSON.parse(event.data);
-            setQueue(prev => [...prev, newSong]);
+            const payload = JSON.parse(event.data);
+
+            if (payload.action === 'CLEAR_QUEUE') {
+                setQueue([]);
+            }
+            else if (payload.action === 'NEXT_SONG') {
+                setQueue(prev => prev.length > 0 ? prev.slice(1) : prev);
+            }
+            else if (payload.id) {
+                setQueue(prev => [...prev, payload]);
+            }
         };
 
         return () => eventSource.close();
