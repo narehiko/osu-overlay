@@ -21,4 +21,5 @@ export interface GoalState {
     start_rank: number;
     live_target: number;
     ultimate_goal: number;
+    tiktok_username: string;
 }

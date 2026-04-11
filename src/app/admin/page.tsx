@@ -5,10 +5,10 @@ export default function AdminPage() {
     const [isUnlocked, setIsUnlocked] = useState(false);
     const [pin, setPin] = useState('');
     const [msg, setMsg] = useState('');
-    const [formData, setFormData] = useState({ start_rank: 0, live_target: 0, ultimate_goal: 0 });
+    const [formData, setFormData] = useState({ start_rank: 0, live_target: 0, ultimate_goal: 0, tiktok_username: '' });
 
     const SECRET_PIN = "12345";
-
+    
     useEffect(() => {
         if (isUnlocked) {
             fetch('/api/goal')
@@ -97,8 +97,22 @@ export default function AdminPage() {
                                 required
                             />
                         </div>
+                        
+                        <div>
+                            <label className="text-sm text-gray-400">TikTok Username (For Song Requests)</label>
+                            <div className="flex mt-1">
+                                <span className="p-2 bg-[#222] border border-r-0 border-gray-700 rounded-l text-gray-400 font-bold">@</span>
+                                <input
+                                    type="text"
+                                    value={formData.tiktok_username}
+                                    onChange={(e) => setFormData({ ...formData, tiktok_username: e.target.value })}
+                                    className="w-full p-2 bg-[#111] border border-gray-700 rounded-r text-cyan-400 font-bold focus:outline-none focus:border-cyan-400"
+                                    placeholder="username_tanpa_at"
+                                />
+                            </div>
+                        </div>
                         <button type="submit" className="mt-2 p-3 bg-gradient-to-r from-pink-500 to-cyan-400 rounded font-bold hover:opacity-80 transition">
-                            Update Stream Goal
+                            Update Stream Goal & Settings
                         </button>
                         <button type="button" onClick={() => { setIsUnlocked(false); setMsg(''); setPin(''); }} className="p-2 border border-red-500 text-red-500 rounded hover:bg-red-500/10 transition mt-2">
                             🔒 Lock / Logout
