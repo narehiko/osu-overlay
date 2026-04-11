@@ -17,6 +17,14 @@ export const useSongQueue = () => {
     const prevTitle = useRef<string | null>(null);
 
     useEffect(() => {
+        const bc = new BroadcastChannel('song_queue_channel');
+        bc.onmessage = (event) => {
+            setQueue(prev => [...prev, event.data]);
+        };
+        return () => bc.close();
+    }, []);
+
+    useEffect(() => {
         const fetchConfig = async () => {
             try {
                 const res = await fetch('/api/goal');

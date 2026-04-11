@@ -1,14 +1,42 @@
 'use client';
 import { useState, useEffect } from 'react';
 
+interface QueuedSong {
+    id: string;
+    requester: string;
+    title: string;
+    artist: string;
+    diff: string;
+}
+
 export default function AdminPage() {
     const [isUnlocked, setIsUnlocked] = useState(false);
     const [pin, setPin] = useState('');
     const [msg, setMsg] = useState('');
     const [formData, setFormData] = useState({ start_rank: 0, live_target: 0, ultimate_goal: 0, tiktok_username: '' });
+    const [mockId, setMockId] = useState('');
+    const [isTesting, setIsTesting] = useState(false);
 
     const SECRET_PIN = "12345";
     
+    const sendMockRequest = () => {
+        if (!mockId) return;
+
+        const bc = new BroadcastChannel('song_queue_channel');
+
+        bc.postMessage({
+            id: mockId,
+            requester: "tester_admin",
+            title: "Simulation Beatmap Title",
+            artist: "Mock Artist",
+            diff: "Insane Difficulty"
+        });
+
+        bc.close();
+        setMockId('');
+        console.log("✅ Mock request broadcasted!");
+    };
+
     useEffect(() => {
         if (isUnlocked) {
             fetch('/api/goal')
@@ -107,10 +135,30 @@ export default function AdminPage() {
                                     value={formData.tiktok_username}
                                     onChange={(e) => setFormData({ ...formData, tiktok_username: e.target.value })}
                                     className="w-full p-2 bg-[#111] border border-gray-700 rounded-r text-cyan-400 font-bold focus:outline-none focus:border-cyan-400"
-                                    placeholder="username_tanpa_at"
+                                    placeholder="username_without_@"
                                 />
                             </div>
                         </div>
+                        
+                            <div className="bg-[#2a2a35] p-6 rounded-xl border-2 border-dashed border-yellow-500/30">
+                                <h3 className="text-yellow-500 font-black text-xs uppercase tracking-[2px] mb-4">
+                                    🛠️ Request Simulator
+                                </h3>
+                                <input
+                                    type="text"
+                                    placeholder="Enter Mock Beatmap ID"
+                                    value={mockId}
+                                    onChange={(e) => setMockId(e.target.value)}
+                                    className="w-full p-2 bg-[#111] border border-gray-700 rounded text-sm text-white focus:outline-none focus:border-yellow-500 mb-3"
+                                />
+                                <button
+                                    onClick={sendMockRequest}
+                                    className="w-full p-2 bg-yellow-600 hover:bg-yellow-500 text-black font-black rounded transition text-xs"
+                                >
+                                    SEND MOCK REQUEST
+                                </button>
+                            </div>
+
                         <button type="submit" className="mt-2 p-3 bg-gradient-to-r from-pink-500 to-cyan-400 rounded font-bold hover:opacity-80 transition">
                             Update Stream Goal & Settings
                         </button>

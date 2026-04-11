@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
     const username = req.nextUrl.searchParams.get('username');
 
     if (!username) {
-        return new Response('Username TikTok diperlukan', { status: 400 });
+        return new Response('TikTok username required', { status: 400 });
     }
 
     const stream = new ReadableStream({
