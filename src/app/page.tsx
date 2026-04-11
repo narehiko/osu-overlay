@@ -1,42 +1,58 @@
+'use client';
+import { Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { LiveRankCard } from '@/components/LiveRankCard';
 import { GoalTracker } from '@/components/GoalTracker';
 import { NowPlaying } from '@/components/NowPlaying';
 import { PpCounter } from '@/components/PpCounter';
 import { SongQueue } from '@/components/SongQueue';
 
-export default function Home() {
-  return (
-    <main className="relative w-full min-h-screen flex flex-col items-center py-8">
+function OverlayContent() {
+  const searchParams = useSearchParams();
+  const overlayType = searchParams.get('overlay');
 
-      {/* Container Vertical Split */}
+  const showAll = !overlayType;
+
+  return (
+    <main className="relative w-full min-h-screen flex flex-col items-center py-4 bg-transparent">
       <div className="flex flex-col gap-5 w-[380px] items-center">
 
-        {/* Widget 1: Live Rank */}
-        <div className="w-[310px] relative overflow-hidden rounded-xl border-2 border-cyan-400 shadow-[0_0_15px_rgba(0,229,255,0.4)]">
-          {/* SVG Background Layer */}
-          <div
-            className="absolute inset-0 opacity-20 pointer-events-none"
-            style={{ backgroundImage: "url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgdmlld0JveD0iMCAwIDgwIDgwIj48ZyBmaWxsPSIjZmY2NmFhIiBmaWxsLW9wYWNpdHk9IjAuMDQiPjxwYXRoIGQ9Ik0wIDBINjg0IDBWMDgzIDE2SDAgNEg0SDAgNEgwIDRoNDAgNjhINDAgNjg0IDBWMDgzIDE2SDAgNEg0SDAgNEgwIDRoNDBaIi8+PC9nPjwvc3ZnPg==')" }}
-          />
-          <div className="relative z-10">
+        {/* Widget 1: Live Rank (Rank & Stats) */}
+        {(showAll || overlayType === 'rank') && (
+          <div className="w-[310px] relative overflow-hidden rounded-xl border-2 border-cyan-400 shadow-[0_0_15px_rgba(0,229,255,0.4)] bg-[#14141e]/85">
             <LiveRankCard />
           </div>
-        </div>
+        )}
 
         {/* Widget 2: Goal Tracker */}
-        <GoalTracker />
+        {(showAll || overlayType === 'goal') && (
+          <GoalTracker />
+        )}
 
         {/* Widget 3: Real-Time PP Counter */}
-        <PpCounter />
+        {(showAll || overlayType === 'rank' || overlayType === 'pp') && (
+          <PpCounter />
+        )}
 
-        {/* Widget 4: Now Playing StreamCompanion */}
-        <NowPlaying />
+        {/* Widget 4: Song Request Queue */}
+        {(showAll || overlayType === 'queue') && (
+          <SongQueue />
+        )}
 
-        {/* Widget 4: Song Queue */}
-        <SongQueue />
-      
+        {/* Widget 5: Now Playing */}
+        {(showAll || overlayType === 'nowplaying') && (
+          <NowPlaying />
+        )}
+
       </div>
-
     </main>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div className="text-white text-xs p-4">Loading Overlay...</div>}>
+      <OverlayContent />
+    </Suspense>
   );
 }
