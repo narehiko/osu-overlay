@@ -1,4 +1,4 @@
-# osu! Stream Overlay (v1.2.0)
+# osu! Stream Overlay (v1.3.1)
 
 ![Next.js](https://img.shields.io/badge/Next.js-black?style=flat&logo=nextdotjs&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white)
@@ -19,13 +19,11 @@ A modern, highly customizable, and lightweight vertical stream overlay (9:16) bu
 - **Modular URL Routing:** No more manual cropping! Render specific widgets via URL parameters (e.g., `?overlay=rank`).
 - **Dynamic Goal Tracker:** A visual progress bar calculating your remaining ranks to reach your daily target.
 - **Now Playing Widget:** Connects to [osu!StreamCompanion](https://github.com/Piotrekol/StreamCompanion) via WebSocket to display map details and star rating.
-- **Secret Admin Panel:** Secure, PIN-protected dashboard to update goals, TikTok username, and **Simulate Requests** via BroadcastChannel.
+- **Secret Admin Panel:** Secure, PIN-protected dashboard with a 2-column layout to update goals, configure TikTok username, manage song queues (Next/Clear), and **Simulate Requests** via Server-Sent Events (SSE).
 
 ## ⚠️ Important Disclaimer (Localhost Only)
 
-This application is designed to be run on **Localhost**. It utilizes a local JSON file (`goal_config.json`) to persist your stream targets. Running it locally guarantees zero latency and keeps your API credentials safe on your own machine.
-
-Running it locally guarantees zero latency for your OBS and keeps your API credentials completely safe on your own machine.
+This application is designed to be run on **Localhost**. It utilizes a local JSON file (`goal_config.json`) to persist your stream targets. Running it locally guarantees zero latency for your OBS and keeps your API credentials completely safe on your own machine.
 
 ## 🚀 Installation & Setup
 
