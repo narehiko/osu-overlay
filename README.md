@@ -1,25 +1,29 @@
-# osu! Stream Overlay
+# osu! Stream Overlay (v1.2.0)
 
 ![Next.js](https://img.shields.io/badge/Next.js-black?style=flat&logo=nextdotjs&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=flat&logo=tailwindcss&logoColor=white)
 ![osu! API v2](https://img.shields.io/badge/osu!_API_v2-FF66AA?style=flat&logo=osu!&logoColor=white)
+![TikTok](https://img.shields.io/badge/TikTok_LIVE-000000?style=flat&logo=tiktok&logoColor=white)
 ![WebSocket](https://img.shields.io/badge/WebSocket-000000?style=flat&logo=socketdotio&logoColor=white)
 
-A modern, highly customizable, and lightweight vertical stream overlay (9:16) built specifically for osu! streamers. Designed for **OBS** and **TikTok LIVE Studio**, this overlay tracks your real-time global/country rank, visualizes your grinding progress, and displays your current playing song dynamically.
+A modern, highly customizable, and lightweight vertical stream overlay (9:16) built specifically for osu! streamers. Designed for **OBS** and **TikTok LIVE Studio** with modular rendering.
 
 ---
 
 ## ✨ Features
 
-- **Live Rank Card:** Automatically fetches your Global and Country rank every 20 seconds using the official osu! API v2. Includes subtle glow animations on rank updates.
-- **Dynamic Goal Tracker:** A visual progress bar calculating your remaining ranks to reach your daily target and ultimate dream rank.
-- **Now Playing Widget:** Connects seamlessly to [osu!StreamCompanion](https://github.com/Piotrekol/StreamCompanion) via WebSocket to display the current map's Title, Artist, Difficulty, Mods, and Star Rating, complete with a dynamic blurred background.
-- **Secret Admin Panel:** A secure, PIN-protected local dashboard to update your stream goals on the fly without touching the code.
+- **Live Rank Card:** Automatically fetches your Global and Country rank every 20 seconds using the official osu! API v2.
+- **Real-Time PP Counter (v1.1.0):** Displays your current Performance Points (livePp) and potential SS PP (mSimulatedPp) dynamically during gameplay.
+- **TikTok Song Request (v1.2.0):** Integrated TikTok LIVE chat listener for `!req [BeatmapID]` commands with automatic metadata fetching.
+- **Modular URL Routing:** No more manual cropping! Render specific widgets via URL parameters (e.g., `?overlay=rank`).
+- **Dynamic Goal Tracker:** A visual progress bar calculating your remaining ranks to reach your daily target.
+- **Now Playing Widget:** Connects to [osu!StreamCompanion](https://github.com/Piotrekol/StreamCompanion) via WebSocket to display map details and star rating.
+- **Secret Admin Panel:** Secure, PIN-protected dashboard to update goals, TikTok username, and **Simulate Requests** via BroadcastChannel.
 
 ## ⚠️ Important Disclaimer (Localhost Only)
 
-This application is purposefully designed to be run on **Localhost**. It utilizes a local JSON file (`goal_config.json`) to persist your stream targets. **Deploying this directly to serverless platforms like Vercel or Netlify is not recommended** without modifying the storage architecture (e.g., using Vercel KV or a database), as serverless functions have ephemeral file systems. 
+This application is designed to be run on **Localhost**. It utilizes a local JSON file (`goal_config.json`) to persist your stream targets. Running it locally guarantees zero latency and keeps your API credentials safe on your own machine.
 
 Running it locally guarantees zero latency for your OBS and keeps your API credentials completely safe on your own machine.
 
@@ -68,6 +72,14 @@ Rename the provided example config file to initialize your local storage:
 cp goal_config.example.json goal_config.json
 ```
 
+## 🔗 URL Routing (Modular Rendering)
+### To avoid manual cropping in OBS/TikTok Studio, use these specific URLs as Browser Sources:
+1. Rank & PP Stats: http://localhost:3000/?overlay=rank
+2. Stream Goal: http://localhost:3000/?overlay=goal
+3. Song Request Queue: http://localhost:3000/?overlay=queue
+4. Now Playing Only: http://localhost:3000/?overlay=nowplaying
+5. Full Preview: http://localhost:3000/
+
 ## 💻 Usage
 ### Running the App Locally (Terminal/CMD)
 Every time you want to stream, you need to start the local Next.js server. 
@@ -88,11 +100,10 @@ Every time you want to stream, you need to start the local Next.js server.
    ⚠️**IMPORTANT:** Keep the terminal window open while you are streaming. If you close the terminal, the overlay will go offline.
 
 ## OBS / TikTok LIVE Studio Setup
-1. Add a new Browser Source / Link Source.
-2. Set the URL to: http://localhost:3000
-3. Set the dimensions to your preferred vertical split size (e.g., Width: 390, Height: 844).
-4. Check "Shutdown source when not visible" (optional but recommended).
-5. The background is fully transparent by default.
+1. Open the Admin Panel at http://localhost:3000/admin (Default PIN: 12345).
+2. Enter your TikTok Username in the field provided.
+3. Viewers can request songs using: !req <BeatmapID> (Example: !req 923245).
+4. Testing: Use the "Request Simulator" in the Admin Panel to test the UI without going live.
 
 ## Accessing the Admin Panel
 To update your stream goals:
