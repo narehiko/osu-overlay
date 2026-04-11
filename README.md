@@ -100,10 +100,11 @@ Every time you want to stream, you need to start the local Next.js server.
    ⚠️**IMPORTANT:** Keep the terminal window open while you are streaming. If you close the terminal, the overlay will go offline.
 
 ## OBS / TikTok LIVE Studio Setup
-1. Open the Admin Panel at http://localhost:3000/admin (Default PIN: 12345).
-2. Enter your TikTok Username in the field provided.
-3. Viewers can request songs using: !req <BeatmapID> (Example: !req 923245).
-4. Testing: Use the "Request Simulator" in the Admin Panel to test the UI without going live.
+1. Open the Admin Panel at `http://localhost:3000/admin` (Default PIN: `12345`).
+2. Enter your **TikTok Username** in the field provided.
+3. Viewers can request songs using: `!req <BeatmapID>` (Example: `!req 923245`).
+4. **Queue Management:** Use the Admin Panel to manually clear the queue or skip to the next song once you finish playing a requested map.
+5. **Testing:** Use the "Request Simulator" in the Admin Panel to test the UI without going live.
 
 ## Accessing the Admin Panel
 To update your stream goals:

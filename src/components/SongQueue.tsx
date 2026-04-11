@@ -14,7 +14,6 @@ export const SongQueue = () => {
                 : 'bg-[#0f0f15]/70 border-2 border-dashed border-gray-600'
             }`}>
 
-            {/* Header dengan kontras lebih tinggi */}
             <div className="flex flex-col border-b border-gray-700 pb-2 mb-2">
                 <div className="flex justify-between items-center">
                     <span className={`text-[13px] font-black uppercase tracking-[2px] ${queue.length > 0 ? 'text-pink-500' : 'text-gray-300'}`}>
@@ -27,10 +26,9 @@ export const SongQueue = () => {
                     )}
                 </div>
 
-                {/* Instruksi & Example dengan warna yang lebih 'Jreng' */}
                 <div className="mt-2 flex flex-col gap-1">
                     <div className="text-[11px] text-white font-bold leading-tight">
-                        Type <span className="text-cyan-400">!req [ID]</span> to add a song
+                        Type <span className="text-cyan-400">!req [BeatmapID]</span> to add a song
                     </div>
                     <div className="text-[10px] text-yellow-400 font-medium italic">
                         Example: <span className="underline">!req 923245</span>
@@ -38,7 +36,6 @@ export const SongQueue = () => {
                 </div>
             </div>
 
-            {/* Konten Antrean */}
             {queue.length > 0 ? (
                 <div className="flex flex-col gap-2">
                     {displayedQueue.map((song, index) => (
