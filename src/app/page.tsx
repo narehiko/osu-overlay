@@ -1,6 +1,6 @@
 'use client';
 import { Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, usePathname } from 'next/navigation';
 import { LiveRankCard } from '@/components/LiveRankCard';
 import { GoalTracker } from '@/components/GoalTracker';
 import { NowPlaying } from '@/components/NowPlaying';
@@ -9,7 +9,16 @@ import { SongQueue } from '@/components/SongQueue';
 
 function OverlayContent() {
   const searchParams = useSearchParams();
-  const overlayType = searchParams.get('overlay');
+  const pathname = usePathname();
+
+  let overlayType = searchParams.get('overlay');
+
+  if (!overlayType && pathname) {
+    if (pathname.includes('rank.html')) overlayType = 'rank';
+    else if (pathname.includes('goal.html')) overlayType = 'goal';
+    else if (pathname.includes('queue.html')) overlayType = 'queue';
+    else if (pathname.includes('nowplaying.html')) overlayType = 'nowplaying';
+  }
 
   const showAll = !overlayType;
 
@@ -51,7 +60,7 @@ function OverlayContent() {
 
 export default function Home() {
   return (
-    <Suspense fallback={<div className="text-white text-xs p-4">Loading Overlay...</div>}>
+    <Suspense fallback={<div className="text-white text-xs p-4 font-bold tracking-widest uppercase">Loading Overlay...</div>}>
       <OverlayContent />
     </Suspense>
   );

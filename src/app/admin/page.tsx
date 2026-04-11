@@ -1,27 +1,43 @@
 'use client';
 import { useState, useEffect } from 'react';
 
-interface QueuedSong {
-    id: string;
-    requester: string;
-    title: string;
-    artist: string;
-    diff: string;
-}
-
 export default function AdminPage() {
-    const [isUnlocked, setIsUnlocked] = useState(false);
     const [pin, setPin] = useState('');
-    const [msg, setMsg] = useState('');
+    const [isUnlocked, setIsUnlocked] = useState(false);
     const [formData, setFormData] = useState({ start_rank: 0, live_target: 0, ultimate_goal: 0, tiktok_username: '' });
     const [mockId, setMockId] = useState('');
-    const [isTesting, setIsTesting] = useState(false);
 
-    const SECRET_PIN = "12345";
-    
+    useEffect(() => {
+        if (isUnlocked) {
+            fetch('/api/goal')
+                .then(res => res.json())
+                .then(data => setFormData(data))
+                .catch(err => console.error(err));
+        }
+    }, [isUnlocked]);
+
+    const handleLogin = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (pin === '12345') setIsUnlocked(true);
+        else alert('Invalid PIN');
+    };
+
+    const updateGoal = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            await fetch('/api/goal', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+            alert('✅ Stream Goal & Settings Updated!');
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
     const sendMockRequest = async () => {
         if (!mockId) return;
-
         const mockData = {
             id: mockId,
             requester: "tester_admin",
@@ -29,20 +45,18 @@ export default function AdminPage() {
             artist: "Mock Artist",
             diff: "Insane"
         };
-
         try {
             const res = await fetch('/api/simulator', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(mockData)
             });
-
             if (res.ok) {
                 setMockId('');
                 console.log("✅ Mock request sent via Server!");
             }
         } catch (err) {
-            console.error("Gagal mengirim simulasi:", err);
+            console.error("Failed to send mock request:", err);
         }
     };
 
@@ -53,165 +67,135 @@ export default function AdminPage() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ action: actionType })
             });
-
-            if (res.ok) {
-                console.log(`✅ Action ${actionType} sent!`);
-            }
+            if (res.ok) console.log(`✅ Action ${actionType} sent!`);
         } catch (err) {
-            console.error("Failed to send action:", err);
+            console.error("Failed to send queue action:", err);
         }
     };
 
-    useEffect(() => {
-        if (isUnlocked) {
-            fetch('/api/goal')
-                .then(res => res.json())
-                .then(data => setFormData(data));
-        }
-    }, [isUnlocked]);
+    // --- Login Form ---
+    if (!isUnlocked) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-[#1a1a24] text-white p-4">
+                <form onSubmit={handleLogin} className="bg-[#2a2a35] p-6 rounded-xl flex flex-col gap-4 w-[350px] shadow-2xl border border-gray-800">
+                    <h2 className="text-center font-black text-xl mb-2 text-cyan-400 tracking-wider">🔒 ADMIN LOGIN</h2>
+                    <input
+                        type="password"
+                        value={pin}
+                        onChange={e => setPin(e.target.value)}
+                        placeholder="Enter PIN"
+                        className="p-3 bg-[#111] rounded border border-gray-700 focus:outline-none focus:border-cyan-400 text-center tracking-[10px] font-black text-xl"
+                    />
+                    <button type="submit" className="p-3 bg-cyan-500 hover:bg-cyan-400 text-black font-black uppercase tracking-widest rounded transition">
+                        Unlock Dashboard
+                    </button>
+                </form>
+            </div>
+        );
+    }
 
-    const handleLogin = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (pin === SECRET_PIN) {
-            setIsUnlocked(true);
-            setMsg("✅ Successfully logged in! Let's grind.");
-        } else {
-            setMsg("❌ Incorrect PIN! Nice try.");
-            setPin('');
-        }
-    };
-
-    const handleUpdate = async (e: React.FormEvent) => {
-        e.preventDefault();
-        const res = await fetch('/api/goal', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData)
-        });
-        const result = await res.json();
-        setMsg(result.success ? "✅ Awesome! Target updated." : "❌ Failed to save data.");
-    };
-
+    // --- Dashboard Content ---
     return (
-        <div className="min-h-screen flex items-center justify-center bg-[#1a1a24] text-white font-sans p-4">
-            <div className="bg-[#2a2a35] p-8 rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.5)] border-t-4 border-pink-500 w-[350px]">
-                <h2 className="text-2xl font-bold text-center text-pink-500 mb-4">🎮 Stream Goal Panel</h2>
+        <div className="min-h-screen flex items-center justify-center bg-[#1a1a24] text-white p-4">
+            <div className="w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-[#1e1e28] p-8 rounded-2xl shadow-[0_0_30px_rgba(0,0,0,0.5)] border border-gray-800 custom-scrollbar">
 
-                {msg && (
-                    <div className={`text-center font-bold mb-4 text-sm ${msg.includes('✅') ? 'text-green-400' : 'text-pink-500'}`}>
-                        {msg}
-                    </div>
-                )}
+                {/* Header Dashboard & Logout */}
+                <div className="flex flex-col sm:flex-row justify-between items-center mb-8 border-b border-gray-700 pb-4 gap-4">
+                    <h1 className="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-pink-500 uppercase tracking-[3px]">
+                        ⚙️ Command Center
+                    </h1>
+                    <button
+                        onClick={() => setIsUnlocked(false)}
+                        className="text-xs bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500 hover:text-white px-5 py-2.5 rounded font-black tracking-widest transition"
+                    >
+                        🔒 LOGOUT
+                    </button>
+                </div>
 
-                {!isUnlocked ? (
-                    <form onSubmit={handleLogin} className="flex flex-col gap-4">
-                        <label className="text-sm text-gray-400 text-center">Enter Secret PIN</label>
-                        <input
-                            type="password"
-                            value={pin}
-                            onChange={(e) => setPin(e.target.value)}
-                            className="p-3 bg-[#111] border border-gray-700 rounded text-cyan-400 text-center tracking-widest font-bold focus:outline-none focus:border-cyan-400"
-                            placeholder="*****"
-                            required
-                        />
-                        <button type="submit" className="p-3 bg-gradient-to-r from-pink-500 to-cyan-400 rounded font-bold hover:opacity-80 transition">
-                            Unlock Dashboard
-                        </button>
-                    </form>
-                ) : (
-                    <form onSubmit={handleUpdate} className="flex flex-col gap-4">
+                {/* 2 Columns Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                    {/* ================= LEFT COLUMN ================= */}
+                    <form onSubmit={updateGoal} className="flex flex-col gap-5">
+                        <h3 className="text-cyan-400 font-bold uppercase tracking-wider text-sm border-b border-cyan-400/30 pb-2">🎯 Stream Goals</h3>
                         <div>
-                            <label className="text-sm text-gray-400">Start Rank (On Stream Start)</label>
-                            <input
-                                type="number"
-                                value={formData.start_rank}
-                                onChange={(e) => setFormData({ ...formData, start_rank: parseInt(e.target.value) })}
-                                className="w-full p-2 mt-1 bg-[#111] border border-gray-700 rounded text-cyan-400 font-bold focus:outline-none focus:border-cyan-400"
-                                required
-                            />
+                            <label className="text-xs text-gray-400 mb-1.5 block font-medium">Start Rank</label>
+                            <input type="number" value={formData.start_rank} onChange={e => setFormData({ ...formData, start_rank: parseInt(e.target.value) })} className="w-full p-2.5 bg-[#111] rounded border border-gray-700 focus:border-cyan-400 outline-none text-white font-medium" />
                         </div>
                         <div>
-                            <label className="text-sm text-gray-400">Today Live Target</label>
-                            <input
-                                type="number"
-                                value={formData.live_target}
-                                onChange={(e) => setFormData({ ...formData, live_target: parseInt(e.target.value) })}
-                                className="w-full p-2 mt-1 bg-[#111] border border-gray-700 rounded text-cyan-400 font-bold focus:outline-none focus:border-cyan-400"
-                                required
-                            />
+                            <label className="text-xs text-gray-400 mb-1.5 block font-medium">Live Target</label>
+                            <input type="number" value={formData.live_target} onChange={e => setFormData({ ...formData, live_target: parseInt(e.target.value) })} className="w-full p-2.5 bg-[#111] rounded border border-gray-700 focus:border-cyan-400 outline-none text-white font-medium" />
                         </div>
                         <div>
-                            <label className="text-sm text-gray-400">Ultimate Goal (Dream Rank)</label>
-                            <input
-                                type="number"
-                                value={formData.ultimate_goal}
-                                onChange={(e) => setFormData({ ...formData, ultimate_goal: parseInt(e.target.value) })}
-                                className="w-full p-2 mt-1 bg-[#111] border border-gray-700 rounded text-cyan-400 font-bold focus:outline-none focus:border-cyan-400"
-                                required
-                            />
+                            <label className="text-xs text-gray-400 mb-1.5 block font-medium">Ultimate Goal</label>
+                            <input type="number" value={formData.ultimate_goal} onChange={e => setFormData({ ...formData, ultimate_goal: parseInt(e.target.value) })} className="w-full p-2.5 bg-[#111] rounded border border-gray-700 focus:border-cyan-400 outline-none text-white font-medium" />
                         </div>
-                        
+
+                        <h3 className="text-pink-400 font-bold uppercase tracking-wider text-sm border-b border-pink-400/30 pb-2 mt-2">📱 TikTok Setup</h3>
                         <div>
-                            <label className="text-sm text-gray-400">TikTok Username (For Song Requests)</label>
-                            <div className="flex mt-1">
-                                <span className="p-2 bg-[#222] border border-r-0 border-gray-700 rounded-l text-gray-400 font-bold">@</span>
-                                <input
-                                    type="text"
-                                    value={formData.tiktok_username}
-                                    onChange={(e) => setFormData({ ...formData, tiktok_username: e.target.value })}
-                                    className="w-full p-2 bg-[#111] border border-gray-700 rounded-r text-cyan-400 font-bold focus:outline-none focus:border-cyan-400"
-                                    placeholder="username_without_@"
-                                />
+                            <label className="text-xs text-gray-400 mb-1.5 block font-medium">TikTok Username</label>
+                            <div className="flex">
+                                <span className="p-2.5 bg-[#222] rounded-l border border-r-0 border-gray-700 font-bold text-gray-500">@</span>
+                                <input type="text" value={formData.tiktok_username} onChange={e => setFormData({ ...formData, tiktok_username: e.target.value })} className="w-full p-2.5 bg-[#111] rounded-r border border-gray-700 focus:border-pink-500 outline-none text-pink-400 font-bold" placeholder="username" />
                             </div>
                         </div>
-                        
-                            <div className="bg-[#2a2a35] p-6 rounded-xl border-2 border-dashed border-yellow-500/30">
-                                <h3 className="text-yellow-500 font-black text-xs uppercase tracking-[2px] mb-4">
-                                    🛠️ Request Simulator
-                                </h3>
-                                <input
-                                    type="text"
-                                    placeholder="Enter Mock Beatmap ID"
-                                    value={mockId}
-                                    onChange={(e) => setMockId(e.target.value)}
-                                    className="w-full p-2 bg-[#111] border border-gray-700 rounded text-sm text-white focus:outline-none focus:border-yellow-500 mb-3"
-                                />
+
+                        <button type="submit" className="mt-4 p-3.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:opacity-85 text-white font-black rounded-lg transition uppercase tracking-widest text-sm shadow-[0_0_15px_rgba(0,229,255,0.2)]">
+                            Update Goal & Settings
+                        </button>
+                    </form>
+
+                    {/* ================= RIGHT COLUMN ================= */}
+                    <div className="flex flex-col gap-6">
+
+                        {/* Box 1: Simulator */}
+                        <div className="bg-[#2a2a35] p-5 rounded-xl border border-yellow-500/30 shadow-lg">
+                            <h3 className="text-yellow-500 font-bold text-sm uppercase tracking-wider mb-4 flex items-center gap-2">
+                                🛠️ Request Simulator
+                            </h3>
+                            <input
+                                type="text"
+                                placeholder="Enter Beatmap ID (e.g., 923245)"
+                                value={mockId}
+                                onChange={(e) => setMockId(e.target.value)}
+                                className="w-full p-2.5 bg-[#111] rounded border border-gray-700 text-sm focus:border-yellow-500 outline-none mb-3 text-white"
+                            />
+                            <button
+                                onClick={sendMockRequest}
+                                className="w-full p-2.5 bg-yellow-600 hover:bg-yellow-500 text-black font-black rounded transition text-xs tracking-widest uppercase"
+                            >
+                                Send Mock Request
+                            </button>
+                        </div>
+
+                        {/* Box 2: Queue Management */}
+                        <div className="bg-[#2a2a35] p-5 rounded-xl border border-red-500/30 shadow-lg">
+                            <h3 className="text-red-400 font-bold text-sm uppercase tracking-wider mb-3 flex items-center gap-2">
+                                🎛️ Queue Management
+                            </h3>
+                            <p className="text-[11px] text-gray-400 mb-4 leading-relaxed font-medium">
+                                Manually control the stream queue. Send execution signals directly to the overlay without refreshing the page.
+                            </p>
+                            <div className="flex gap-3">
                                 <button
-                                    onClick={sendMockRequest}
-                                    className="w-full p-2 bg-yellow-600 hover:bg-yellow-500 text-black font-black rounded transition text-xs"
+                                    onClick={() => sendQueueAction('NEXT_SONG')}
+                                    className="flex-1 p-3 bg-yellow-500 hover:bg-yellow-400 text-black font-black rounded transition text-[11px] tracking-wider flex flex-col items-center justify-center gap-1 shadow-md"
                                 >
-                                    SEND MOCK REQUEST
+                                    <span className="text-xl">⏭️</span>
+                                    <span>NEXT SONG</span>
                                 </button>
-
-                                <div className="pt-4 border-t border-gray-700">
-                                    <h3 className="text-gray-400 font-bold text-[10px] uppercase tracking-[1px] mb-2">
-                                        Queue Management
-                                    </h3>
-                                    <div className="flex gap-2">
-                                        <button
-                                            onClick={() => sendQueueAction('NEXT_SONG')}
-                                            className="flex-1 p-2 bg-yellow-500 hover:bg-yellow-400 text-black font-black rounded transition text-[10px]"
-                                        >
-                                            ⏭️ NEXT SONG
-                                        </button>
-                                        <button
-                                            onClick={() => sendQueueAction('CLEAR_QUEUE')}
-                                            className="flex-1 p-2 bg-red-600 hover:bg-red-500 text-white font-black rounded transition text-[10px]"
-                                        >
-                                            🗑️ CLEAR ALL
-                                        </button>
-                                    </div>
-                                </div>
+                                <button
+                                    onClick={() => sendQueueAction('CLEAR_QUEUE')}
+                                    className="flex-1 p-3 bg-red-600 hover:bg-red-500 text-white font-black rounded transition text-[11px] tracking-wider flex flex-col items-center justify-center gap-1 shadow-md"
+                                >
+                                    <span className="text-xl">🗑️</span>
+                                    <span>CLEAR ALL</span>
+                                </button>
                             </div>
+                        </div>
 
-                        <button type="submit" className="mt-2 p-3 bg-gradient-to-r from-pink-500 to-cyan-400 rounded font-bold hover:opacity-80 transition">
-                            Update Stream Goal & Settings
-                        </button>
-                        <button type="button" onClick={() => { setIsUnlocked(false); setMsg(''); setPin(''); }} className="p-2 border border-red-500 text-red-500 rounded hover:bg-red-500/10 transition mt-2">
-                            🔒 Lock / Logout
-                        </button>
-                    </form>
-                )}
+                    </div>
+                </div>
             </div>
         </div>
     );
